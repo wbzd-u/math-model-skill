@@ -159,6 +159,7 @@ def validate_paths(project_root: Path, payloads: dict[str, dict[str, Any]], erro
     path_values: list[tuple[str, str | None]] = []
     path_values.extend(("intake data", item.get("path")) for item in as_dict_list(intake.get("data_bindings")))
     path_values.extend(("environment file", path) for path in plan.get("environment_files", []))
+    path_values.append(("plotting data handoff", plan.get("plotting_backend", {}).get("data_handoff_path")))
     for stage in as_dict_list(plan.get("stages")):
         path_values.extend(("stage source", path) for path in stage.get("source_files", []))
         path_values.extend(("stage output", item.get("path")) for item in as_dict_list(stage.get("output_bindings")))

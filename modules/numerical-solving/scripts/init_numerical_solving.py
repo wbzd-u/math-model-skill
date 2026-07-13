@@ -617,6 +617,7 @@ def main() -> int:
             "status": "DRAFT",
             "diagnostic_question": None,
             "language": None,
+            "plotting_backend": {"language": "not-needed", "rationale": "尚未决定是否需要图表。", "data_handoff_path": None},
             "environment_files": [],
             "stages": run_plan_stages,
             "simplifications": [],

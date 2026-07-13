@@ -675,6 +675,17 @@ class NumericalSolvingScriptsTest(unittest.TestCase):
         self.assertTrue((MODULE_ROOT / "references" / "figure-design-sources.md").is_file())
         self.assertTrue((MODULE_ROOT / "static" / "execution-methods" / "figure-design.md").is_file())
 
+    def test_run_plan_requires_explicit_plotting_backend(self) -> None:
+        self.make_contract_exploratory()
+        self.assertEqual(self.run_initializer(self.project, "probe").returncode, 0)
+        plan = self.load(self.project, "solver", "run-plan.yaml")
+        self.assertEqual(plan["plotting_backend"]["language"], "not-needed")
+        del plan["plotting_backend"]
+        self.save(self.project, "solver", "run-plan.yaml", plan)
+        result = self.run_validator(self.project, "probe")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("plotting_backend", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

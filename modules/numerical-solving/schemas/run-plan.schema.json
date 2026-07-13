@@ -3,7 +3,7 @@
   "title": "Numerical Run Plan",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "mode", "run_id", "status", "diagnostic_question", "language", "environment_files", "stages", "simplifications", "numerical_controls", "semantic_deviations"],
+  "required": ["schema_version", "mode", "run_id", "status", "diagnostic_question", "language", "plotting_backend", "environment_files", "stages", "simplifications", "numerical_controls", "semantic_deviations"],
   "properties": {
     "schema_version": {"const": "0.1.0"},
     "mode": {"enum": ["probe", "solve"]},
@@ -11,6 +11,16 @@
     "status": {"enum": ["DRAFT", "READY", "BLOCKED", "FEEDBACK_REQUIRED"]},
     "diagnostic_question": {"type": ["string", "null"]},
     "language": {"type": ["string", "null"]},
+    "plotting_backend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["language", "rationale", "data_handoff_path"],
+      "properties": {
+        "language": {"enum": ["python", "matlab", "r", "not-needed"]},
+        "rationale": {"type": "string", "minLength": 1},
+        "data_handoff_path": {"type": ["string", "null"]}
+      }
+    },
     "environment_files": {"type": "array", "items": {"type": "string"}},
     "stages": {
       "type": "array",
