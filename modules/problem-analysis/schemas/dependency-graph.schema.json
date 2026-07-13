@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dependency Graph",
+  "type": "object",
+  "required": ["schema_version", "nodes", "edges"],
+  "properties": {
+    "schema_version": {"const": "0.2.0"},
+    "nodes": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}},
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "artifact", "reason"],
+        "properties": {
+          "from": {"type": "string", "pattern": "^sp-[0-9]{2}$"},
+          "to": {"type": "string", "pattern": "^sp-[0-9]{2}$"},
+          "artifact": {"type": "string"},
+          "reason": {"type": "string"}
+        }
+      }
+    }
+  }
+}

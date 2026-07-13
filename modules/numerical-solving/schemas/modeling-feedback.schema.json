@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Solver Modeling Feedback",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "feedback_id", "status", "run_id", "trigger", "return_to", "affected_refs", "diagnosis", "evidence_refs", "reproduction_commands", "semantic_change_required", "proposed_action"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "feedback_id": {"type": "string", "pattern": "^feedback-[0-9]{3}$"},
+    "status": {"enum": ["OPEN", "RESOLVED"]},
+    "run_id": {"type": "string", "pattern": "^(probe|solve)-[0-9]{3}$"},
+    "trigger": {"enum": ["data_issue", "contract_conflict", "model_infeasible", "model_nonidentifiable", "diagnostic_rejection", "semantic_ambiguity", "numerical_evidence"]},
+    "return_to": {"enum": ["problem-analysis", "modeling-selection"]},
+    "affected_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "diagnosis": {"type": "string", "minLength": 1},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "reproduction_commands": {"type": "array", "items": {"type": "string"}},
+    "semantic_change_required": {"type": "boolean"},
+    "proposed_action": {"type": "string", "minLength": 1}
+  }
+}

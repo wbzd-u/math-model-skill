@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ambiguity Register",
+  "type": "object",
+  "required": ["schema_version", "items"],
+  "properties": {
+    "schema_version": {"const": "0.2.0"},
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "statement", "source_ref", "impact", "definition_impact", "affected_subproblem_ids", "alternatives", "resolution_evidence", "disposition", "status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^amb-[0-9]{3}$"},
+          "statement": {"type": "string", "minLength": 1},
+          "source_ref": {"type": "string", "minLength": 1},
+          "impact": {"type": "string", "minLength": 1},
+          "definition_impact": {"type": "boolean"},
+          "affected_subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "uniqueItems": true},
+          "alternatives": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["interpretation", "impact_on"],
+              "properties": {
+                "interpretation": {"type": "string", "minLength": 1},
+                "impact_on": {"type": "array", "items": {"enum": ["objective", "feasible_set", "evaluation", "output", "data", "entity_definition"]}, "minItems": 1, "uniqueItems": true}
+              }
+            }
+          },
+          "resolution_evidence": {"type": ["string", "null"]},
+          "disposition": {"enum": ["ask_user", "verify_rules", "verify_data", "defer_to_modeling", "unresolved"]},
+          "status": {"enum": ["open", "resolved", "blocking"]}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"definition_impact": {"const": true}}, "required": ["definition_impact"]},
+            "then": {
+              "properties": {
+                "affected_subproblem_ids": {"minItems": 1},
+                "alternatives": {"minItems": 2},
+                "status": {"enum": ["blocking", "resolved"]}
+              }
+            }
+          },
+          {
+            "if": {"properties": {"status": {"const": "resolved"}}, "required": ["status"]},
+            "then": {"properties": {"resolution_evidence": {"type": "string", "minLength": 1}}}
+          }
+        ]
+      }
+    }
+  }
+}

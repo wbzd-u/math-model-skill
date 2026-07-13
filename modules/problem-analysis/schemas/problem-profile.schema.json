@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Problem Profile",
+  "type": "object",
+  "required": ["schema_version", "project_id", "title", "competition", "scope", "source_files", "objectives", "deliverables", "task_tags", "gate_status"],
+  "properties": {
+    "schema_version": {"const": "0.2.0"},
+    "project_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "competition": {
+      "type": "object",
+      "required": ["type", "year", "problem_id", "rules_sources"],
+      "properties": {
+        "type": {"enum": ["cumcm", "mcm", "icm", "generic", "unknown"]},
+        "year": {"type": ["integer", "null"]},
+        "problem_id": {"type": ["string", "null"]},
+        "rules_sources": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "scope": {"type": "string", "minLength": 1},
+    "source_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "sha256", "role"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^src-[0-9]{3}$"},
+          "path": {"type": "string"},
+          "sha256": {"type": ["string", "null"]},
+          "role": {"enum": ["problem", "data", "rules", "supplement", "user-note"]}
+        }
+      }
+    },
+    "objectives": {"type": "array", "items": {"type": "string"}},
+    "deliverables": {"type": "array", "items": {"type": "string"}},
+    "task_tags": {
+      "type": "array",
+      "items": {"enum": ["prediction", "evaluation", "optimization", "classification", "simulation", "network", "mechanism", "policy-analysis", "uncertainty-analysis", "mixed"]}
+    },
+    "gate_status": {"enum": ["DRAFT", "PASS", "PASS_WITH_OPEN_ITEMS", "BLOCKED"]}
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Validation Results",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "status", "results", "additional_checks"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "run_id": {"type": "string", "pattern": "^(probe|solve)-[0-9]{3}$"},
+    "status": {"enum": ["DRAFT", "COMPLETE", "COMPLETE_WITH_LIMITATIONS", "FEEDBACK_REQUIRED"]},
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["test_id", "status", "procedure_executed", "metric_values", "criteria_evaluation", "evidence_refs", "failure_action", "limitation"],
+        "properties": {
+          "test_id": {"type": "string", "pattern": "^val-[0-9]{3}$"},
+          "status": {"enum": ["NOT_RUN", "PASSED", "FAILED", "INCONCLUSIVE", "NOT_APPLICABLE"]},
+          "procedure_executed": {"type": ["string", "null"]},
+          "metric_values": {"type": "array", "items": {"type": "object", "required": ["metric", "value", "unit"], "properties": {"metric": {"type": "string"}, "value": {"type": ["number", "integer", "string", "boolean", "null"]}, "unit": {"type": ["string", "null"]}}}},
+          "criteria_evaluation": {"type": ["string", "null"]},
+          "evidence_refs": {"type": "array", "items": {"type": "string"}},
+          "failure_action": {"enum": ["revise-model", "return-to-analysis", "solver-diagnostic", "report-limitation", "none"]},
+          "limitation": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "additional_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "category", "target", "status", "evidence_refs", "finding"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^check-[0-9]{3}$"},
+          "category": {"enum": ["input", "unit", "constraint", "boundary", "convergence", "stability", "leakage", "uncertainty", "reproducibility", "sanity"]},
+          "target": {"type": "string", "minLength": 1},
+          "status": {"enum": ["NOT_RUN", "PASSED", "FAILED", "INCONCLUSIVE", "NOT_APPLICABLE"]},
+          "evidence_refs": {"type": "array", "items": {"type": "string"}},
+          "finding": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}

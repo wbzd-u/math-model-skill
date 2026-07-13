@@ -1,0 +1,76 @@
+name: problem-analysis
+version: 0.2.0
+description: >
+  Declarative router for the problem-analysis module. It separates invariant
+  analysis rules from competition- and input-specific fragments.
+
+always_load:
+  - static/core/contract.md
+  - static/core/workflow.md
+  - static/core/structural-pressure-test.md
+  - static/core/quality-gate.md
+
+analysis_sequence:
+  - static/analysis-methods/literal-extraction.md
+  - static/analysis-methods/entity-variable-analysis.md
+  - static/analysis-methods/requirement-decomposition.md
+  - static/analysis-methods/data-task-alignment.md
+  - static/analysis-methods/dependency-analysis.md
+  - static/analysis-methods/ambiguity-assumption-analysis.md
+  - static/analysis-methods/adversarial-review.md
+
+axes:
+  competition:
+    detect: >
+      Use explicit user or official-file evidence first. Map CUMCM and
+      全国大学生数学建模竞赛 to cumcm; map MCM or ICM to mcm-icm; otherwise use generic
+      and record uncertainty when the competition matters.
+    values:
+      cumcm: static/fragments/competition/cumcm.md
+      mcm-icm: static/fragments/competition/mcm-icm.md
+      generic: static/fragments/competition/generic.md
+    default: generic
+    multi: false
+
+  input_mode:
+    detect: >
+      Classify the provided inputs by the evidence that must be inspected.
+      Use mixed when two or more materially different input types are present.
+    values:
+      text-only: static/fragments/input-mode/text-only.md
+      documents: static/fragments/input-mode/documents.md
+      tabular: static/fragments/input-mode/tabular.md
+      mixed: static/fragments/input-mode/mixed.md
+    default: text-only
+    multi: false
+
+references:
+  on_demand:
+    - after: requirement-decomposition
+      when_any_task_tags: [mechanism, simulation]
+      load: static/fragments/task-structure/dynamic-spatial.md
+    - after: requirement-decomposition
+      when_any_task_tags: [optimization, policy-analysis, network]
+      load: static/fragments/task-structure/coupling-allocation.md
+    - after: requirement-decomposition
+      when_any_task_tags: [prediction, classification, evaluation, uncertainty-analysis]
+      load: static/fragments/task-structure/evidence-criterion.md
+
+outputs:
+  directory: analysis
+  files:
+    - problem-profile.yaml
+    - requirement-trace.yaml
+    - data-inventory.yaml
+    - entity-variable-map.yaml
+    - subproblems.yaml
+    - data-task-matrix.yaml
+    - dependency-graph.yaml
+    - ambiguity-register.yaml
+    - assumption-register.yaml
+    - analysis-audit.yaml
+    - problem-analysis-report.md
+
+tools:
+  initializer: scripts/init_problem_analysis.py
+  validator: scripts/validate_problem_analysis.py

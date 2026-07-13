@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Subproblems",
+  "type": "object",
+  "required": ["schema_version", "subproblems"],
+  "properties": {
+    "schema_version": {"const": "0.2.0"},
+    "subproblems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "statement", "source_requirement_ids", "inputs", "required_outputs", "objectives", "constraints", "evaluation_criteria", "task_tags", "semantic_contract", "difficulty_assessment", "difficulty_drivers", "upstream_ids", "unresolved_ids"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^sp-[0-9]{2}$"},
+          "statement": {"type": "string", "minLength": 1},
+          "source_requirement_ids": {"type": "array", "items": {"type": "string", "pattern": "^req-[0-9]{3}$"}, "minItems": 1, "uniqueItems": true},
+          "inputs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+          "required_outputs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+          "objectives": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+          "constraints": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+          "evaluation_criteria": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+          "task_tags": {
+            "type": "array",
+            "items": {"enum": ["prediction", "evaluation", "optimization", "classification", "simulation", "network", "mechanism", "policy-analysis", "uncertainty-analysis"]},
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "semantic_contract": {
+            "type": "object",
+            "required": ["exogenous_or_given_variable_ids", "controllable_variable_ids", "outcome_variable_ids", "state_or_event_relation", "information_timing", "success_predicate", "evaluation_aggregation", "feasibility_summary", "boundary_or_termination", "couplings", "acceptance_tests"],
+            "properties": {
+              "exogenous_or_given_variable_ids": {"type": "array", "items": {"type": "string", "pattern": "^var-[0-9]{3}$"}, "uniqueItems": true},
+              "controllable_variable_ids": {"type": "array", "items": {"type": "string", "pattern": "^var-[0-9]{3}$"}, "uniqueItems": true},
+              "outcome_variable_ids": {"type": "array", "items": {"type": "string", "pattern": "^var-[0-9]{3}$"}, "uniqueItems": true},
+              "state_or_event_relation": {"type": "string", "minLength": 1},
+              "information_timing": {"type": "string", "minLength": 1},
+              "success_predicate": {"type": "string", "minLength": 1},
+              "evaluation_aggregation": {"type": "string", "minLength": 1},
+              "feasibility_summary": {"type": "string", "minLength": 1},
+              "boundary_or_termination": {"type": "string", "minLength": 1},
+              "couplings": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["type", "statement", "affected_variable_ids", "affected_subproblem_ids", "source_refs"],
+                  "properties": {
+                    "type": {"enum": ["definition", "time", "space", "resource", "logical", "global-local", "information", "network", "other"]},
+                    "statement": {"type": "string", "minLength": 1},
+                    "affected_variable_ids": {"type": "array", "items": {"type": "string", "pattern": "^var-[0-9]{3}$"}, "uniqueItems": true},
+                    "affected_subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "uniqueItems": true},
+                    "source_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
+                  },
+                  "allOf": [
+                    {"anyOf": [
+                      {"properties": {"affected_variable_ids": {"minItems": 1}}},
+                      {"properties": {"affected_subproblem_ids": {"minItems": 1}}}
+                    ]}
+                  ]
+                }
+              },
+              "acceptance_tests": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["criterion", "source_requirement_ids"],
+                  "properties": {
+                    "criterion": {"type": "string", "minLength": 1},
+                    "source_requirement_ids": {"type": "array", "items": {"type": "string", "pattern": "^req-[0-9]{3}$"}, "minItems": 1, "uniqueItems": true}
+                  }
+                },
+                "minItems": 1
+              }
+            }
+          },
+          "difficulty_assessment": {
+            "type": "object",
+            "required": ["status", "rationale"],
+            "properties": {
+              "status": {"enum": ["identified", "none-evidenced"]},
+              "rationale": {"type": "string", "minLength": 1}
+            }
+          },
+          "difficulty_drivers": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "required": ["id", "type", "statement", "evidence_refs", "why_it_changes_problem", "affected_dimensions", "affected_variable_ids", "affected_subproblem_ids", "omission_consequence", "status"],
+              "properties": {
+                "id": {"type": "string", "pattern": "^diff-[0-9]{2}$"},
+                "type": {"enum": ["definition", "coupling", "dynamic", "scale", "uncertainty", "identifiability", "information", "aggregation", "scope", "other"]},
+                "statement": {"type": "string", "minLength": 1},
+                "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+                "why_it_changes_problem": {"type": "string", "minLength": 1},
+                "affected_dimensions": {"type": "array", "items": {"enum": ["objective", "feasible_set", "evaluation", "data", "output", "dependency"]}, "minItems": 1, "uniqueItems": true},
+                "affected_variable_ids": {"type": "array", "items": {"type": "string", "pattern": "^var-[0-9]{3}$"}, "uniqueItems": true},
+                "affected_subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "uniqueItems": true},
+                "omission_consequence": {"type": "string", "minLength": 1},
+                "status": {"enum": ["confirmed", "risk"]}
+              },
+              "allOf": [
+                {"anyOf": [
+                  {"properties": {"affected_variable_ids": {"minItems": 1}}},
+                  {"properties": {"affected_subproblem_ids": {"minItems": 1}}}
+                ]}
+              ]
+            }
+          },
+          "upstream_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "uniqueItems": true},
+          "unresolved_ids": {"type": "array", "items": {"type": "string", "pattern": "^amb-[0-9]{3}$"}, "uniqueItems": true}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"difficulty_assessment": {"properties": {"status": {"const": "identified"}}, "required": ["status"]}}},
+            "then": {"properties": {"difficulty_drivers": {"minItems": 1}}},
+            "else": {"properties": {"difficulty_drivers": {"maxItems": 0}}}
+          }
+        ]
+      }
+    }
+  }
+}

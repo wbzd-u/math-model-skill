@@ -1,0 +1,4 @@
+interface:
+  display_name: "我的数学建模"
+  short_description: "分阶段完成分析、建模、求解、验证与竞赛论文写作"
+  default_prompt: "Use $my-math-modeling to analyze this modeling problem, solve it with traceable evidence, and draft a validated competition paper."

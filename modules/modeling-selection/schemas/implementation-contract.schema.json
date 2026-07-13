@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Solver Implementation Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "status", "contract_id", "input_snapshot",
+    "scope_subproblem_ids", "approved_component_ids", "parameters",
+    "execution_stages", "required_outputs", "validation_test_ids",
+    "immutable_items", "solver_discretion", "feedback_policy"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "status": {"enum": ["DRAFT", "EXPLORATORY", "READY", "BLOCKED"]},
+    "contract_id": {"type": "string", "minLength": 1},
+    "input_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intake_sha256", "model_spec_sha256", "validation_plan_sha256"],
+      "properties": {
+        "intake_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "model_spec_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "validation_plan_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "scope_subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "minItems": 1},
+    "approved_component_ids": {"type": "array", "items": {"type": "string", "pattern": "^cmp-[0-9]{3}$"}},
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "definition", "source", "value_policy", "calibration_allowed"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^param-[0-9]{3}$"},
+          "definition": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "value_policy": {"type": "string", "minLength": 1},
+          "calibration_allowed": {"type": "boolean"}
+        }
+      }
+    },
+    "execution_stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "component_ids", "input_refs", "output_refs", "required_invariants", "solver_freedom"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^run-[0-9]{2}$"},
+          "component_ids": {"type": "array", "items": {"type": "string", "pattern": "^cmp-[0-9]{3}$"}, "minItems": 1},
+          "input_refs": {"type": "array", "items": {"type": "string"}},
+          "output_refs": {"type": "array", "items": {"type": "string"}},
+          "required_invariants": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+          "solver_freedom": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "required_outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "subproblem_ids", "type", "destination", "acceptance_requirement_ids"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^out-[0-9]{3}$"},
+          "subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}},
+          "type": {"type": "string", "minLength": 1},
+          "destination": {"type": "string", "minLength": 1},
+          "acceptance_requirement_ids": {"type": "array", "items": {"type": "string", "pattern": "^req-[0-9]{3}$"}}
+        }
+      }
+    },
+    "validation_test_ids": {"type": "array", "items": {"type": "string", "pattern": "^val-[0-9]{3}$"}},
+    "immutable_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "source_ref", "statement"],
+        "properties": {
+          "type": {"enum": ["objective", "constraint", "assumption", "evaluation", "definition", "output"]},
+          "source_ref": {"type": "string", "minLength": 1},
+          "statement": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "solver_discretion": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "feedback_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "triggers", "required_evidence"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "triggers": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+        "required_evidence": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
+      }
+    }
+  }
+}

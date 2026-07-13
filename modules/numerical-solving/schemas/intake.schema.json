@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Numerical Solving Intake",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "status", "run_id", "project_id", "contract_id",
+    "contract_status", "upstream_files", "scope_subproblem_ids", "component_ids",
+    "stage_ids", "validation_test_ids", "required_output_ids", "data_bindings",
+    "variable_bindings", "parameter_bindings", "stage_bindings", "immutable_items",
+    "solver_discretion", "unresolved_items", "gate"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "mode": {"enum": ["probe", "solve"]},
+    "status": {"enum": ["READY", "BLOCKED"]},
+    "run_id": {"type": "string", "pattern": "^(probe|solve)-[0-9]{3}$"},
+    "project_id": {"type": "string", "minLength": 1},
+    "contract_id": {"type": "string", "minLength": 1},
+    "contract_status": {"enum": ["DRAFT", "EXPLORATORY", "READY", "BLOCKED"]},
+    "upstream_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256", "required"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "required": {"type": "boolean"}
+        }
+      },
+      "minItems": 4
+    },
+    "scope_subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "uniqueItems": true},
+    "component_ids": {"type": "array", "items": {"type": "string", "pattern": "^cmp-[0-9]{3}$"}, "uniqueItems": true},
+    "stage_ids": {"type": "array", "items": {"type": "string", "pattern": "^run-[0-9]{2}$"}, "uniqueItems": true},
+    "validation_test_ids": {"type": "array", "items": {"type": "string", "pattern": "^val-[0-9]{3}$"}, "uniqueItems": true},
+    "required_output_ids": {"type": "array", "items": {"type": "string", "pattern": "^out-[0-9]{3}$"}, "uniqueItems": true},
+    "data_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["data_id", "path", "format", "observed_sha256", "required_by_stage_ids", "status", "issues"],
+        "properties": {
+          "data_id": {"type": "string", "pattern": "^data-[0-9]{2}$"},
+          "path": {"type": "string"},
+          "format": {"type": "string"},
+          "observed_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "required_by_stage_ids": {"type": "array", "items": {"type": "string", "pattern": "^run-[0-9]{2}$"}, "uniqueItems": true},
+          "status": {"enum": ["available", "missing", "unresolved", "not-required"]},
+          "issues": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "variable_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["variable_id", "kind", "data_ids", "field_refs", "expected_unit", "source_refs", "status"],
+        "properties": {
+          "variable_id": {"type": "string", "pattern": "^(var|dvar)-[0-9]{3}$"},
+          "kind": {"enum": ["field", "derived", "decision", "state", "generated", "given", "unresolved"]},
+          "data_ids": {"type": "array", "items": {"type": "string", "pattern": "^data-[0-9]{2}$"}, "uniqueItems": true},
+          "field_refs": {"type": "array", "items": {"type": "string"}},
+          "expected_unit": {"type": ["string", "null"]},
+          "source_refs": {"type": "array", "items": {"type": "string"}},
+          "status": {"enum": ["resolved", "partial", "unresolved", "generated"]}
+        }
+      }
+    },
+    "parameter_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["parameter_id", "kind", "value_or_config_ref", "source_refs", "calibration_allowed", "status"],
+        "properties": {
+          "parameter_id": {"type": "string", "pattern": "^param-[0-9]{3}$"},
+          "kind": {"enum": ["fixed", "data-derived", "calibrated", "scenario", "solver-choice", "unresolved"]},
+          "value_or_config_ref": {"type": ["string", "number", "integer", "boolean", "null"]},
+          "source_refs": {"type": "array", "items": {"type": "string"}},
+          "calibration_allowed": {"type": "boolean"},
+          "status": {"enum": ["resolved", "partial", "unresolved"]}
+        }
+      }
+    },
+    "stage_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["stage_id", "input_refs", "output_refs", "status"],
+        "properties": {
+          "stage_id": {"type": "string", "pattern": "^run-[0-9]{2}$"},
+          "input_refs": {"type": "array", "items": {"type": "string"}},
+          "output_refs": {"type": "array", "items": {"type": "string"}},
+          "status": {"enum": ["resolved", "partial", "unresolved"]}
+        }
+      }
+    },
+    "immutable_items": {"type": "array", "items": {"type": "object"}},
+    "solver_discretion": {"type": "array", "items": {"type": "string"}},
+    "unresolved_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "statement", "affected_stage_ids", "source_refs", "severity"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["input", "field", "unit", "parameter", "path", "contract", "data"]},
+          "statement": {"type": "string", "minLength": 1},
+          "affected_stage_ids": {"type": "array", "items": {"type": "string", "pattern": "^run-[0-9]{2}$"}},
+          "source_refs": {"type": "array", "items": {"type": "string"}},
+          "severity": {"enum": ["warning", "blocking"]}
+        }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "reasons"],
+      "properties": {
+        "eligible": {"type": "boolean"},
+        "reasons": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

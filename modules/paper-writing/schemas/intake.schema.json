@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Paper Writing Intake",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "status", "project_id", "competition", "upstream_files", "requirement_ids", "solver_status", "gate"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "mode": {"enum": ["draft", "final"]},
+    "status": {"enum": ["READY", "BLOCKED"]},
+    "project_id": {"type": "string", "minLength": 1},
+    "competition": {"type": "object", "additionalProperties": false, "required": ["type", "language", "template_path", "rule_sources"], "properties": {"type": {"enum": ["cumcm", "mcm", "icm", "generic", "unknown"]}, "language": {"enum": ["zh", "en", "unknown"]}, "template_path": {"type": ["string", "null"]}, "rule_sources": {"type": "array", "items": {"type": "string"}}}},
+    "upstream_files": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "required"], "properties": {"path": {"type": "string"}, "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}, "required": {"type": "boolean"}}}, "minItems": 3},
+    "requirement_ids": {"type": "array", "items": {"type": "string", "pattern": "^req-[0-9]{3}$"}, "uniqueItems": true},
+    "solver_status": {"type": "object", "additionalProperties": false, "required": ["results_status", "ready_for_writing", "validation_status", "reproducibility_status"], "properties": {"results_status": {"type": ["string", "null"]}, "ready_for_writing": {"type": "boolean"}, "validation_status": {"type": ["string", "null"]}, "reproducibility_status": {"type": ["string", "null"]}}},
+    "gate": {"type": "object", "additionalProperties": false, "required": ["eligible", "reasons"], "properties": {"eligible": {"type": "boolean"}, "reasons": {"type": "array", "items": {"type": "string"}}}}
+  }
+}

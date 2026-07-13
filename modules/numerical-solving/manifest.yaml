@@ -1,0 +1,44 @@
+name: numerical-solving
+version: 0.1.0
+description: Contract-faithful numerical execution with diagnostic probe and formal solve modes.
+
+always_load:
+  - static/core/contract.md
+  - static/core/workflow.md
+  - static/core/execution-boundary.md
+  - static/core/quality-gate.md
+  - static/core/reuse-policy.md
+
+execution_sequence:
+  - static/execution-methods/intake-and-bindings.md
+  - static/execution-methods/reuse-and-plan.md
+  - static/execution-methods/implement-and-check.md
+  - static/execution-methods/run-and-diagnose.md
+  - static/execution-methods/validate-and-package.md
+
+modes:
+  probe: diagnostic execution; accepts EXPLORATORY or READY and never enables paper writing
+  solve: formal execution; requires a READY implementation contract
+
+knowledge_index: references/index.yaml
+external_adapters:
+  - ../../references/external-skill-adapters.md
+
+outputs:
+  directory: solver
+  fixed_files:
+    - intake.yaml
+    - run-plan.yaml
+    - implementation-provenance.yaml
+    - experiment-registry.yaml
+    - validation-results.yaml
+    - results-manifest.yaml
+    - reproducibility.json
+    - solver-audit.yaml
+    - solver-report.md
+  conditional_files:
+    - modeling-feedback.yaml
+
+tools:
+  initializer: scripts/init_numerical_solving.py
+  validator: scripts/validate_numerical_solving.py

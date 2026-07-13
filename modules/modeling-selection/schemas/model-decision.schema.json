@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Model Decision",
+  "type": "object",
+  "required": ["schema_version", "status", "scope_subproblem_ids", "main_candidate_ids", "baseline_candidate_ids", "alternative_candidate_ids", "baseline_exception", "alternative_exception", "comparisons", "coverage", "decision_rationale", "residual_risks"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "status": {"enum": ["DRAFT", "EXPLORATORY", "READY", "BLOCKED"]},
+    "scope_subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "minItems": 1},
+    "main_candidate_ids": {"type": "array", "items": {"type": "string", "pattern": "^cand-[0-9]{3}$"}},
+    "baseline_candidate_ids": {"type": "array", "items": {"type": "string", "pattern": "^cand-[0-9]{3}$"}},
+    "alternative_candidate_ids": {"type": "array", "items": {"type": "string", "pattern": "^cand-[0-9]{3}$"}},
+    "baseline_exception": {"type": ["string", "null"]},
+    "alternative_exception": {"type": ["string", "null"]},
+    "comparisons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["dimension", "assessments"],
+        "properties": {
+          "dimension": {"enum": ["requirement-coverage", "structural-fit", "data-identifiability", "assumptions", "interpretability", "validation", "implementation-cost", "contest-fit", "failure-risk"]},
+          "assessments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["candidate_id", "rating", "evidence_refs", "comment"],
+              "properties": {
+                "candidate_id": {"type": "string", "pattern": "^cand-[0-9]{3}$"},
+                "rating": {"enum": ["strong", "moderate", "weak", "unknown"]},
+                "evidence_refs": {"type": "array", "items": {"type": "string"}},
+                "comment": {"type": "string", "minLength": 1}
+              }
+            },
+            "minItems": 1
+          }
+        }
+      },
+      "minItems": 0
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["requirement_ids", "difficulty_refs", "subproblem_ids"],
+      "properties": {
+        "requirement_ids": {"type": "array", "items": {"type": "string", "pattern": "^req-[0-9]{3}$"}},
+        "difficulty_refs": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}:diff-[0-9]{2}$"}},
+        "subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "minItems": 1}
+      }
+    },
+    "decision_rationale": {"type": "string", "minLength": 1},
+    "residual_risks": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}

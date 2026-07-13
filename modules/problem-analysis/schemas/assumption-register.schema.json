@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Assumption Register",
+  "type": "object",
+  "required": ["schema_version", "items"],
+  "properties": {
+    "schema_version": {"const": "0.2.0"},
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "statement", "basis", "source_ref", "affected_subproblems", "validation_needed", "status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^asm-[0-9]{3}$"},
+          "statement": {"type": "string", "minLength": 1},
+          "basis": {"enum": ["given", "data_supported", "domain_convention", "proposed_for_modeling"]},
+          "source_ref": {"type": ["string", "null"]},
+          "affected_subproblems": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}},
+          "validation_needed": {"type": "boolean"},
+          "status": {"enum": ["confirmed", "proposed", "rejected"]}
+        }
+      }
+    }
+  }
+}

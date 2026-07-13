@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Paper Writing Audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "checks", "overall_status"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "checks": {"type": "array", "minItems": 10, "maxItems": 10, "items": {"type": "object", "additionalProperties": false, "required": ["dimension", "status", "evidence", "findings", "required_actions"], "properties": {"dimension": {"enum": ["input_integrity", "requirement_coverage", "claim_evidence", "terminology", "numerical_consistency", "figures_tables", "citations", "limitations", "competition_format", "render_quality"]}, "status": {"enum": ["PASS", "WARN", "FAIL", "NA"]}, "evidence": {"type": "array", "items": {"type": "string"}}, "findings": {"type": "array", "items": {"type": "string"}}, "required_actions": {"type": "array", "items": {"type": "string"}}}}},
+    "overall_status": {"enum": ["PASS", "PASS_WITH_WARNINGS", "FAIL", "NOT_READY"]}
+  }
+}

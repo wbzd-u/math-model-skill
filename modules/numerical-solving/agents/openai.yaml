@@ -1,0 +1,4 @@
+interface:
+  display_name: "数值求解与实验执行"
+  short_description: "按模型契约完成诊断试算、正式求解、验证与复现交付"
+  default_prompt: "Use $numerical-solving to execute this modeling contract in probe or solve mode with validated reproducible results."

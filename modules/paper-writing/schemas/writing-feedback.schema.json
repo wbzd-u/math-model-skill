@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Paper Writing Feedback",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "feedback_id", "status", "return_to", "affected_claim_ids", "diagnosis", "evidence_refs", "required_action"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "feedback_id": {"type": "string", "pattern": "^write-feedback-[0-9]{3}$"},
+    "status": {"enum": ["OPEN", "RESOLVED"]},
+    "return_to": {"enum": ["problem-analysis", "modeling-selection", "numerical-solving"]},
+    "affected_claim_ids": {"type": "array", "items": {"type": "string", "pattern": "^claim-[0-9]{3}$"}},
+    "diagnosis": {"type": "string", "minLength": 1},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "required_action": {"type": "string", "minLength": 1}
+  }
+}

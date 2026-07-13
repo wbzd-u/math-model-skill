@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Solver Results Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "run_id", "status", "ready_for_writing", "contract_outputs", "claims", "disclosed_failed_experiment_ids", "limitations", "feedback_ref"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "mode": {"enum": ["probe", "solve"]},
+    "run_id": {"type": "string", "pattern": "^(probe|solve)-[0-9]{3}$"},
+    "status": {"enum": ["DRAFT", "COMPLETE", "COMPLETE_WITH_LIMITATIONS", "NEEDS_REVISION", "BLOCKED"]},
+    "ready_for_writing": {"type": "boolean"},
+    "contract_outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["output_id", "status", "path", "sha256", "experiment_ids", "acceptance_evidence_refs", "description", "limitations"],
+        "properties": {
+          "output_id": {"type": "string", "pattern": "^out-[0-9]{3}$"},
+          "status": {"enum": ["PRODUCED", "NOT_PRODUCED", "INVALID"]},
+          "path": {"type": ["string", "null"]},
+          "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "experiment_ids": {"type": "array", "items": {"type": "string", "pattern": "^exp-[0-9]{3}$"}},
+          "acceptance_evidence_refs": {"type": "array", "items": {"type": "string"}},
+          "description": {"type": ["string", "null"]},
+          "limitations": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement", "subproblem_ids", "evidence_refs", "scope", "limitations"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^claim-[0-9]{3}$"},
+          "statement": {"type": "string", "minLength": 1},
+          "subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}},
+          "evidence_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+          "scope": {"type": "string", "minLength": 1},
+          "limitations": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "disclosed_failed_experiment_ids": {"type": "array", "items": {"type": "string", "pattern": "^exp-[0-9]{3}$"}, "uniqueItems": true},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "feedback_ref": {"type": ["string", "null"]}
+  }
+}

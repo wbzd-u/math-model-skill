@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Entity Variable Map",
+  "type": "object",
+  "required": ["schema_version", "entities", "variables"],
+  "properties": {
+    "schema_version": {"const": "0.2.0"},
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "source_refs", "relationships"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^ent-[0-9]{3}$"},
+          "name": {"type": "string", "minLength": 1},
+          "type": {"type": "string", "minLength": 1},
+          "source_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+          "relationships": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "symbol", "role", "entity_ids", "data_ids", "unit", "domain", "temporal_granularity", "spatial_granularity", "source_ref", "status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^var-[0-9]{3}$"},
+          "name": {"type": "string", "minLength": 1},
+          "symbol": {"type": ["string", "null"]},
+          "role": {"enum": ["given", "unknown", "controllable", "state", "outcome", "index"]},
+          "entity_ids": {"type": "array", "items": {"type": "string", "pattern": "^ent-[0-9]{3}$"}},
+          "data_ids": {"type": "array", "items": {"type": "string", "pattern": "^data-[0-9]{2}$"}},
+          "unit": {"type": ["string", "null"]},
+          "domain": {"type": ["string", "null"]},
+          "temporal_granularity": {"type": ["string", "null"]},
+          "spatial_granularity": {"type": ["string", "null"]},
+          "source_ref": {"type": "string", "minLength": 1},
+          "status": {"enum": ["confirmed", "ambiguous", "proposed"]}
+        }
+      }
+    }
+  }
+}

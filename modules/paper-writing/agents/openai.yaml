@@ -1,0 +1,4 @@
+interface:
+  display_name: "数学建模论文写作"
+  short_description: "用真实结果、论证图与来源映射生成可核验竞赛论文"
+  default_prompt: "Use $paper-writing to turn this validated modeling project into an evidence-grounded competition paper."

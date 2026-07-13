@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Paper Terminology Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "terms"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "terms": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "canonical", "kind", "symbol", "unit", "definition", "variants", "first_use", "status"], "properties": {"id": {"type": "string", "pattern": "^term-[0-9]{3}$"}, "canonical": {"type": "string", "minLength": 1}, "kind": {"enum": ["variable", "parameter", "model", "component", "metric", "dataset", "abbreviation", "concept"]}, "symbol": {"type": ["string", "null"]}, "unit": {"type": ["string", "null"]}, "definition": {"type": "string", "minLength": 1}, "variants": {"type": "array", "items": {"type": "string"}}, "first_use": {"type": ["string", "null"]}, "status": {"enum": ["locked", "needs-review"]}}}}
+  }
+}

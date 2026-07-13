@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Paper Claim Evidence Source Map",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "items", "citation_records"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "items": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "anchor", "type", "importance", "statement", "requirement_ids", "section_id", "evidence_refs", "support_status", "boundary", "citation_keys"], "properties": {"id": {"type": "string", "pattern": "^claim-[0-9]{3}$"}, "anchor": {"type": "string", "pattern": "^claim-[0-9]{3}$"}, "type": {"enum": ["requirement-answer", "model-definition", "assumption", "result", "validation", "interpretation", "limitation", "background"]}, "importance": {"enum": ["core", "supporting"]}, "statement": {"type": "string", "minLength": 1}, "requirement_ids": {"type": "array", "items": {"type": "string", "pattern": "^req-[0-9]{3}$"}}, "section_id": {"type": ["string", "null"], "pattern": "^sec-[0-9]{2}$"}, "evidence_refs": {"type": "array", "items": {"type": "string"}}, "support_status": {"enum": ["supported", "bounded", "needs-evidence", "provisional"]}, "boundary": {"type": ["string", "null"]}, "citation_keys": {"type": "array", "items": {"type": "string"}}}}},
+    "citation_records": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["key", "title", "stable_id", "source_type", "verified", "used_for_claim_ids"], "properties": {"key": {"type": "string", "minLength": 1}, "title": {"type": "string", "minLength": 1}, "stable_id": {"type": ["string", "null"]}, "source_type": {"enum": ["paper", "book", "official-rule", "dataset", "documentation"]}, "verified": {"type": "boolean"}, "used_for_claim_ids": {"type": "array", "items": {"type": "string", "pattern": "^claim-[0-9]{3}$"}}}}}
+  }
+}

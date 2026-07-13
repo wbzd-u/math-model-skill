@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Modeling Selection Intake",
+  "type": "object",
+  "required": ["schema_version", "analysis_package", "analysis_gate_status", "selection_intake_status", "selected_subproblem_ids", "allowed_subproblem_ids", "handoff_allowed_subproblem_ids", "blocked_items", "conditional_items"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "analysis_package": {
+      "type": "object",
+      "required": ["path", "project_id", "schema_version", "consumed_file_hashes"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "project_id": {"type": "string", "minLength": 1},
+        "schema_version": {"const": "0.2.0"},
+        "consumed_file_hashes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "sha256"],
+            "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "analysis_gate_status": {"enum": ["DRAFT", "PASS", "PASS_WITH_OPEN_ITEMS", "BLOCKED"]},
+    "selection_intake_status": {"enum": ["PASS", "CONDITIONAL", "EXPLORATORY", "BLOCKED"]},
+    "selected_subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "uniqueItems": true},
+    "allowed_subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "uniqueItems": true},
+    "handoff_allowed_subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "uniqueItems": true},
+    "blocked_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "statement", "source_ref"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["ambiguity", "requirement", "data", "rule", "audit", "scope"]},
+          "statement": {"type": "string", "minLength": 1},
+          "source_ref": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "conditional_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "statement", "affected_subproblem_ids"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "statement": {"type": "string", "minLength": 1},
+          "affected_subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}}
+        }
+      }
+    }
+  }
+}

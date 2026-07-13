@@ -1,0 +1,49 @@
+name: modeling-selection
+version: 0.2.0
+description: Exploration-first candidate selection with scientific solver handoff.
+
+always_load:
+  - static/core/contract.md
+  - static/core/workflow.md
+  - static/core/intake-gate.md
+  - static/core/quality-gate.md
+
+selection_sequence:
+  - static/selection-methods/intake-and-scope.md
+  - static/selection-methods/evidence-retrieval.md
+  - static/selection-methods/candidate-chain.md
+  - static/selection-methods/comparison-decision.md
+  - static/selection-methods/model-specification.md
+  - static/selection-methods/validation-contract.md
+
+competition_fragments:
+  cumcm: static/fragments/competition/cumcm.md
+  mcm: static/fragments/competition/mcm-icm.md
+  icm: static/fragments/competition/mcm-icm.md
+  generic: static/fragments/competition/generic.md
+  unknown: static/fragments/competition/generic.md
+
+knowledge_index: references/index.yaml
+external_adapters:
+  - ../../references/external-skill-adapters.md
+  - references/external-case-evidence-protocol.md
+
+validation_modes:
+  explore: default; continue with warnings unless the package is structurally unsafe
+  handoff: require a scientifically coherent main model, validation plan, and solver contract
+
+outputs:
+  directory: modeling
+  files:
+    - intake-check.yaml
+    - candidate-methods.yaml
+    - model-decision.yaml
+    - model-specification.yaml
+    - validation-plan.yaml
+    - implementation-contract.yaml
+    - modeling-selection-audit.yaml
+    - modeling-selection-report.md
+
+tools:
+  initializer: scripts/init_modeling_selection.py
+  validator: scripts/validate_modeling_selection.py

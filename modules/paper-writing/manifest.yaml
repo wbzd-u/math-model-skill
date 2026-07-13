@@ -1,0 +1,50 @@
+name: paper-writing
+version: 0.1.0
+description: Evidence-grounded mathematical modeling competition paper drafting and delivery.
+
+always_load:
+  - static/core/contract.md
+  - static/core/workflow.md
+  - static/core/claim-evidence.md
+  - static/core/quality-gate.md
+
+writing_sequence:
+  - static/writing-methods/evidence-intake.md
+  - static/writing-methods/argument-and-terms.md
+  - static/writing-methods/sections-and-draft.md
+  - static/writing-methods/citations-and-format.md
+  - static/writing-methods/latex-delivery.md
+  - static/writing-methods/audit-and-delivery.md
+
+competition_fragments:
+  cumcm: static/fragments/competition/cumcm.md
+  mcm: static/fragments/competition/mcm-icm.md
+  icm: static/fragments/competition/mcm-icm.md
+  generic: static/fragments/competition/generic.md
+  unknown: static/fragments/competition/generic.md
+
+knowledge_index: references/index.yaml
+external_adapters:
+  - ../../references/external-skill-adapters.md
+  - references/competition-delivery-adapters.md
+
+outputs:
+  directory: paper
+  fixed_files:
+    - intake.yaml
+    - argument-map.yaml
+    - terminology-ledger.yaml
+    - source-map.yaml
+    - manuscript.md
+    - references.bib
+    - writing-audit.yaml
+    - paper-report.md
+  conditional_files:
+    - writing-feedback.yaml
+    - manuscript.docx
+    - manuscript.tex
+    - manuscript.pdf
+
+tools:
+  initializer: scripts/init_paper_writing.py
+  validator: scripts/validate_paper_writing.py

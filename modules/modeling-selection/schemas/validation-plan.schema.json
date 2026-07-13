@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Validation Plan",
+  "type": "object",
+  "required": ["schema_version", "status", "tests", "coverage"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "status": {"enum": ["DRAFT", "EXPLORATORY", "READY", "BLOCKED"]},
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "subproblem_ids", "component_ids", "target_claim", "procedure", "metrics", "pass_criteria", "failure_action"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^val-[0-9]{3}$"},
+          "type": {"enum": ["baseline-comparison", "constraint-check", "error", "sensitivity", "robustness", "uncertainty", "boundary", "adversarial", "reproducibility"]},
+          "subproblem_ids": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}$"}, "minItems": 1},
+          "component_ids": {"type": "array", "items": {"type": "string", "pattern": "^cmp-[0-9]{3}$"}, "minItems": 1},
+          "target_claim": {"type": "string", "minLength": 1},
+          "procedure": {"type": "string", "minLength": 1},
+          "metrics": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+          "pass_criteria": {"type": "string", "minLength": 1},
+          "failure_action": {"enum": ["revise-model", "return-to-analysis", "solver-diagnostic", "report-limitation"]}
+        }
+      },
+      "minItems": 0
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["component_ids", "difficulty_refs", "requirement_ids"],
+      "properties": {
+        "component_ids": {"type": "array", "items": {"type": "string", "pattern": "^cmp-[0-9]{3}$"}},
+        "difficulty_refs": {"type": "array", "items": {"type": "string", "pattern": "^sp-[0-9]{2}:diff-[0-9]{2}$"}},
+        "requirement_ids": {"type": "array", "items": {"type": "string", "pattern": "^req-[0-9]{3}$"}}
+      }
+    }
+  }
+}
