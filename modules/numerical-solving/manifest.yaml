@@ -14,6 +14,7 @@ execution_sequence:
   - static/execution-methods/reuse-and-plan.md
   - static/execution-methods/implement-and-check.md
   - static/execution-methods/run-and-diagnose.md
+  - static/execution-methods/figure-design.md
   - static/execution-methods/validate-and-package.md
 
 modes:
@@ -23,6 +24,7 @@ modes:
 knowledge_index: references/index.yaml
 external_adapters:
   - ../../references/external-skill-adapters.md
+  - references/figure-design-sources.md
 
 outputs:
   directory: solver

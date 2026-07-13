@@ -669,7 +669,11 @@ class NumericalSolvingScriptsTest(unittest.TestCase):
     def test_external_adapter_register_is_available(self) -> None:
         manifest = (MODULE_ROOT / "manifest.yaml").read_text(encoding="utf-8")
         self.assertIn("../../references/external-skill-adapters.md", manifest)
+        self.assertIn("references/figure-design-sources.md", manifest)
+        self.assertIn("static/execution-methods/figure-design.md", manifest)
         self.assertTrue((MODULE_ROOT.parents[1] / "references" / "external-skill-adapters.md").is_file())
+        self.assertTrue((MODULE_ROOT / "references" / "figure-design-sources.md").is_file())
+        self.assertTrue((MODULE_ROOT / "static" / "execution-methods" / "figure-design.md").is_file())
 
 
 if __name__ == "__main__":
