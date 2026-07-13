@@ -796,6 +796,54 @@ def validate(project_root: Path, strict: bool) -> tuple[list[str], list[str], di
         errors.append("implementation contract execution stages reference unknown components")
     if contract.get("status") == "READY" and not main_component_ids <= execution_component_ids:
         errors.append("READY implementation contract must schedule every main model component")
+
+    route_audit = decision.get("route_audit") if isinstance(decision.get("route_audit"), dict) else {}
+    route_audit_status = route_audit.get("status")
+    route_audit_items = as_dict_list(route_audit.get("items"))
+    if route_audit_status == "audited":
+        duplicate_route_audit_ids = duplicate_ids(route_audit_items)
+        if duplicate_route_audit_ids:
+            errors.append(f"route audit contains duplicate item IDs: {sorted(duplicate_route_audit_ids)}")
+        audited_main_ids = {item.get("main_candidate_id") for item in route_audit_items}
+        if audited_main_ids != main_candidate_ids:
+            errors.append("route audit must cover every selected main candidate exactly once")
+        stage_by_id = {stage.get("id"): stage for stage in as_dict_list(contract.get("execution_stages"))}
+        test_by_id = {test.get("id"): test for test in tests}
+        feedback_triggers = set(contract.get("feedback_policy", {}).get("triggers", []))
+        for item in route_audit_items:
+            item_id = item.get("id", "<unnamed>")
+            main_candidate_id = item.get("main_candidate_id")
+            simpler_candidate_id = item.get("simpler_candidate_id")
+            if main_candidate_id not in main_candidate_ids:
+                errors.append(f"{item_id}: route audit references a candidate that is not a selected main route")
+                continue
+            if simpler_candidate_id is not None and simpler_candidate_id not in candidate_by_id:
+                errors.append(f"{item_id}: route audit references an unknown simpler candidate")
+            main_candidate_components = {
+                component_id
+                for component_id, component in component_by_id.items()
+                if component.get("candidate_id") == main_candidate_id
+            }
+            deciding_test = test_by_id.get(item.get("deciding_test_id"))
+            if deciding_test is None:
+                errors.append(f"{item_id}: route audit references an unknown deciding test")
+            elif not main_candidate_components & set(deciding_test.get("component_ids", [])):
+                errors.append(f"{item_id}: deciding test does not exercise the audited main candidate")
+            elif deciding_test.get("failure_action") not in {"revise-model", "solver-diagnostic", "return-to-analysis"}:
+                errors.append(f"{item_id}: deciding test must feed failure back to modeling or diagnostics")
+            execution_stage = stage_by_id.get(item.get("first_execution_stage_id"))
+            if execution_stage is None:
+                errors.append(f"{item_id}: route audit references an unknown first execution stage")
+            elif not main_candidate_components & set(execution_stage.get("component_ids", [])):
+                errors.append(f"{item_id}: first execution stage does not schedule the audited main candidate")
+            if item.get("feedback_trigger") not in feedback_triggers:
+                errors.append(f"{item_id}: feedback trigger is not declared by the implementation contract")
+    elif route_audit_status == "not-needed":
+        if route_audit_items:
+            errors.append("route audit marked not-needed must not contain audit items")
+    else:
+        errors.append("route audit must declare whether an audit is needed")
+
     spec_immutable_refs = {
         item.get("source_ref")
         for item in as_dict_list(spec.get("immutable_semantics"))
@@ -840,6 +888,7 @@ def validate(project_root: Path, strict: bool) -> tuple[list[str], list[str], di
         "model_component_coverage": 1.0 if model_component_coverage_ok else 0.0,
         "validation_component_coverage": 1.0 if validation_component_coverage_ok else 0.0,
         "contract_scope_coverage": 1.0 if contract_scope_coverage_ok else 0.0,
+        "route_audit_linkage": 1.0 if route_audit_status in {"not-needed", "audited"} and not any("route audit" in error for error in errors) else 0.0,
         "audit_completion": audit_completion,
     })
 

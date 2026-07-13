@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Model Decision",
   "type": "object",
-  "required": ["schema_version", "status", "scope_subproblem_ids", "main_candidate_ids", "baseline_candidate_ids", "alternative_candidate_ids", "baseline_exception", "alternative_exception", "comparisons", "coverage", "decision_rationale", "residual_risks"],
+  "required": ["schema_version", "status", "scope_subproblem_ids", "main_candidate_ids", "baseline_candidate_ids", "alternative_candidate_ids", "baseline_exception", "alternative_exception", "comparisons", "coverage", "decision_rationale", "residual_risks", "route_audit"],
   "properties": {
     "schema_version": {"const": "0.1.0"},
     "status": {"enum": ["DRAFT", "EXPLORATORY", "READY", "BLOCKED"]},
@@ -47,6 +47,42 @@
       }
     },
     "decision_rationale": {"type": "string", "minLength": 1},
-    "residual_risks": {"type": "array", "items": {"type": "string", "minLength": 1}}
+    "residual_risks": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "route_audit": {
+      "type": "object",
+      "required": ["status", "rationale", "items"],
+      "properties": {
+        "status": {"enum": ["not-needed", "audited"]},
+        "rationale": {"type": "string", "minLength": 1},
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "main_candidate_id", "simpler_candidate_id", "capability_gap", "added_capability", "deciding_test_id", "first_execution_stage_id", "flip_condition", "feedback_trigger"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^route-audit-[0-9]{2}$"},
+              "main_candidate_id": {"type": "string", "pattern": "^cand-[0-9]{3}$"},
+              "simpler_candidate_id": {"type": ["string", "null"], "pattern": "^cand-[0-9]{3}$"},
+              "capability_gap": {"type": "string", "minLength": 1},
+              "added_capability": {"type": "string", "minLength": 1},
+              "deciding_test_id": {"type": "string", "pattern": "^val-[0-9]{3}$"},
+              "first_execution_stage_id": {"type": "string", "pattern": "^run-[0-9]{2}$"},
+              "flip_condition": {"type": "string", "minLength": 1},
+              "feedback_trigger": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "not-needed"}}},
+          "then": {"properties": {"items": {"maxItems": 0}}}
+        },
+        {
+          "if": {"properties": {"status": {"const": "audited"}}},
+          "then": {"properties": {"items": {"minItems": 1}}}
+        }
+      ]
+    }
   }
 }

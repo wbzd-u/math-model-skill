@@ -430,6 +430,11 @@ class ModelingSelectionScriptsTest(unittest.TestCase):
                 },
                 "decision_rationale": "Use a direct baseline and a constraint-aware main score.",
                 "residual_risks": ["The declared scale still needs a boundary check."],
+                "route_audit": {
+                    "status": "not-needed",
+                    "rationale": "The bounded score is a transparent direct correction, not a material complexity upgrade.",
+                    "items": [],
+                },
             },
         )
         write_json(
@@ -899,6 +904,36 @@ class ModelingSelectionScriptsTest(unittest.TestCase):
         result = self.run_validator(self.project, strict=True)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("does not preserve every model-specification immutable semantic", result.stdout)
+
+    def test_audited_route_must_bind_test_stage_and_feedback(self) -> None:
+        self.complete_package()
+        decision = self.load(self.project, "modeling", "model-decision.yaml")
+        decision["route_audit"] = {
+            "status": "audited",
+            "rationale": "The bounded score adds an explicit constraint and must prove that it preserves feasibility.",
+            "items": [
+                {
+                    "id": "route-audit-01",
+                    "main_candidate_id": "cand-002",
+                    "simpler_candidate_id": "cand-001",
+                    "capability_gap": "The identity baseline cannot guarantee the required output bounds.",
+                    "added_capability": "The selected route enforces the declared score interval.",
+                    "deciding_test_id": "val-002",
+                    "first_execution_stage_id": "run-01",
+                    "flip_condition": "Any bound violation returns the route for revision.",
+                    "feedback_trigger": "conflicting constraints",
+                }
+            ],
+        }
+        self.save(self.project, "modeling", "model-decision.yaml", decision)
+        result = self.run_validator(self.project, mode="handoff")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+        decision["route_audit"]["items"][0]["feedback_trigger"] = "unsupported route"
+        self.save(self.project, "modeling", "model-decision.yaml", decision)
+        result = self.run_validator(self.project, mode="handoff")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("feedback trigger is not declared", result.stdout)
 
     def test_malformed_upstream_is_reported_without_traceback(self) -> None:
         profile = self.load(self.project, "analysis", "problem-profile.yaml")

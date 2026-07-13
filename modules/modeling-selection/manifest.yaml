@@ -13,6 +13,7 @@ selection_sequence:
   - static/selection-methods/evidence-retrieval.md
   - static/selection-methods/candidate-chain.md
   - static/selection-methods/comparison-decision.md
+  - static/selection-methods/route-audit.md
   - static/selection-methods/model-specification.md
   - static/selection-methods/validation-contract.md
 
@@ -27,6 +28,7 @@ knowledge_index: references/index.yaml
 external_adapters:
   - ../../references/external-skill-adapters.md
   - references/external-case-evidence-protocol.md
+  - references/route-audit-adapter.md
 
 validation_modes:
   explore: default; continue with warnings unless the package is structurally unsafe
