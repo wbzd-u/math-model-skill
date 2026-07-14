@@ -12,6 +12,8 @@
 - [安装](#安装)
 - [快速开始](#快速开始)
 - [阶段与交接](#阶段与交接)
+- [人机协作与决策台账](#人机协作与决策台账)
+- [资料卡与判断提示](#资料卡与判断提示)
 - [图表、后端与论文交付](#图表后端与论文交付)
 - [目录结构](#目录结构)
 - [校验与测试](#校验与测试)
@@ -40,6 +42,7 @@
 5. **图表是视觉证据**：图必须支持判断、诊断、比较或决策，不按固定数量生成。
 6. **论文由证据向外写作**：主张、数字、图表和引用必须回链到模型定义、真实输出或已核验来源。
 7. **复用但不抄袭**：成熟库、公开方法和论文公式可合理参考；代码许可、版本、用途、偏离和验证必须记录。
+8. **高影响决定由人确认**：问题范围、核心假设、目标权衡、外部数据、主路线与结论范围不由 Agent 静默决定；低风险执行保持自动。
 
 ## 四阶段流程
 
@@ -72,6 +75,41 @@ paper-writing
 ```
 
 每个模块只写入自己的项目目录。`analysis/`、`modeling/`、`solver/` 的上游产物在下游均视为只读证据。
+
+## 人机协作与决策台账
+
+本项目不是全自动流水线。LLM 负责发现结构、提出可验证选项和执行诊断；Skill 负责证据、契约、复现和回退；人负责无法由技术证据唯一决定的高影响取舍。
+
+| 决策级别 | 处理方式 | 例子 |
+| --- | --- | --- |
+| 低风险 | 自动执行 | 文件审计、字段检查、模板映射、代码实现细节、日志和视觉 QA |
+| 中风险 | Agent 提出方案，人可选择 | 候选路线、清洗策略、求解器、图表和验证配置 |
+| 高风险 | 人工确认后才能正式交接 | 核心假设、目标/风险权衡、外部数据、主路线、结论范围与创新性表述 |
+
+存在高影响选择时，从 `assets/human-decision-ledger.template.yaml` 创建：
+
+```text
+my-project/
+  decisions/
+    human-decision-ledger.yaml
+```
+
+每条记录包含候选方案、证据、风险、Agent 推荐、人工选择、验证条件和失败回退。`awaiting-human` 仅阻断依赖该决定的正式 `handoff`、`solve` 或 `final`；不阻断附件审计、候选探索和诊断准备。详见 [人机决策台账协议](references/human-decision-ledger.md)。
+
+## 资料卡与判断提示
+
+Skill 不将整套赛题、扫描论文、原始 CSV、视频或算法百科直接装入上下文，而是按需加载小型资料卡。卡片只保留触发条件、结构判断、候选路线、验证、失效信号、不可迁移边界和来源状态。
+
+当前资料卡来自用户提供的 2024-2025 CUMCM 本地语料，编号案例论文的作者、奖项和许可尚未核验，因此仅作结构启发，不能作为当前题结论、可复制答案或引用来源。
+
+| 模块 | 卡片用途 | 当前内容 |
+| --- | --- | --- |
+| `problem-analysis` | 发现状态、分问阶梯、重复主体和多模态边界 | [结构卡](modules/problem-analysis/references/cumcm-2024-2025-structure-cards.md) |
+| `modeling-selection` | 生成候选路线、复杂度升级条件和拒绝条件 | [方法路线卡](modules/modeling-selection/references/cumcm-2024-2025-method-cards.md) |
+| `numerical-solving` | 模板接口、模型族诊断、主体/时间边界验证 | [执行验证卡](modules/numerical-solving/references/cumcm-2024-2025-execution-cards.md) |
+| `paper-writing` | 主张范围、论证链、官方模板与案例边界 | [论证交付卡](modules/paper-writing/references/cumcm-2024-2025-writing-cards.md) |
+
+四个模块还会依次加载短判断提示，促使 Agent 在当前题上回答“真正缺少什么能力”“哪个实验可以推翻路线”“这句话由什么证据支持”等问题。提示结构独立适配自其他 Skill，明确排除了固定模型数、固定图数、固定篇幅和自动追求创新的套路，详见 [判断提示适配边界](references/judgment-prompt-adapters.md)。
 
 ## 安装
 
@@ -236,7 +274,7 @@ my-math-modeling/
   SKILL.md                       # 总入口
   modules/
     problem-analysis/
-      SKILL.md  manifest.yaml  schemas/  scripts/  static/
+      SKILL.md  manifest.yaml  schemas/  scripts/  static/  references/
     modeling-selection/
       SKILL.md  manifest.yaml  schemas/  scripts/  static/  references/
     numerical-solving/
@@ -245,6 +283,10 @@ my-math-modeling/
       SKILL.md  manifest.yaml  schemas/  scripts/  static/  references/
   references/
     external-skill-adapters.md
+    human-decision-ledger.md
+    judgment-prompt-adapters.md
+  assets/
+    human-decision-ledger.template.yaml
 ```
 
 典型项目工作区：
@@ -256,6 +298,7 @@ my-project/
   modeling/                      # modeling-selection 产物
   solver/                        # 代码、配置、实验、结果、图表、日志
   paper/                         # 论文、引用、格式化交付物
+  decisions/                     # 仅在存在高影响人工选择时创建
 ```
 
 `static/` 存放按工作流加载的提示与规则；`schemas/` 定义机器可校验的数据边界；`scripts/` 负责初始化和校验；`references/` 存放按需阅读的来源说明和扩展规则。
