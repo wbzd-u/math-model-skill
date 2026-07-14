@@ -22,6 +22,18 @@ description: 面向 CUMCM、MCM、ICM 及一般数学建模任务的四阶段工
 - `PROJECT_ROOT`：用户赛题或项目所在目录；题目分析写入 `analysis/`，方法选择与模型设计写入 `modeling/`，数值求解写入 `solver/`，论文写作写入 `paper/`。
 - 原始题目、附件和官方规则保持只读；需要转换时在 `PROJECT_ROOT` 中创建副本。
 
+## 人机协作与决策台账
+
+LLM 负责提出可验证的选项与推荐，Skill 负责证据、边界、交接和回退；人只负责高影响取舍。仅当当前任务确有高影响决定时，从 [assets/human-decision-ledger.template.yaml](assets/human-decision-ledger.template.yaml) 在 `PROJECT_ROOT/decisions/human-decision-ledger.yaml` 创建或更新台账，并遵守 [references/human-decision-ledger.md](references/human-decision-ledger.md)。
+
+- **自动执行**：文件审计、字段检查、模板映射、代码实现细节、日志、复现、视觉 QA 和低风险诊断。
+- **提出选项，可人工选择**：候选路线、数据清洗细节、求解器、图表和验证配置。
+- **必须等人工确认**：问题范围、核心假设、目标/风险取舍、外部数据政策、主路线承诺，以及最终主张的适用范围或创新性表述。
+
+`awaiting-human` 的条目阻断其依赖的 `READY` handoff、正式 `solve` 或 `final`，但不阻断不依赖该决定的附件审计、候选探索和诊断准备。不得把 Agent 推荐、沉默或默认值记作人工选择。
+
+判断提示从其他 Skill 独立适配时，读取 [references/judgment-prompt-adapters.md](references/judgment-prompt-adapters.md) 了解可迁移的提问结构与明确排除的固定套路。
+
 ## 路由
 
 | 用户意图 | 执行 |

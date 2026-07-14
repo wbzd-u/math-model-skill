@@ -15,6 +15,7 @@ execution_sequence:
   - static/execution-methods/implement-and-check.md
   - static/execution-methods/run-and-diagnose.md
   - static/execution-methods/figure-design.md
+  - static/execution-methods/judgment-prompts.md
   - static/execution-methods/validate-and-package.md
 
 modes:

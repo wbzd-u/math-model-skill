@@ -1,0 +1,7 @@
+schema_version: 0.1.0
+description: Optional local-corpus structural cards. Load only when the active problem matches a card trigger.
+cards:
+  - id: pa-cumcm-structure
+    path: cumcm-2024-2025-structure-cards.md
+    load_when: A multi-question task has dynamic coupling, staged extensions, repeated entities, or multimodal observations.
+    source_status: User-provided local corpus; case-paper award, authorship, and license are unverified.

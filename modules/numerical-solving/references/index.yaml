@@ -1,3 +1,7 @@
 schema_version: 0.1.0
 description: Optional implementation and diagnostic cards. Load only cards matching the active model family.
-cards: []
+cards:
+  - id: execution-cumcm-2024-2025
+    path: cumcm-2024-2025-execution-cards.md
+    load_when: The contract has a result template, model-family-specific diagnostics, repeated entities, or multimodal inputs.
+    source_status: User-provided local corpus; use as execution guidance, not as result evidence.

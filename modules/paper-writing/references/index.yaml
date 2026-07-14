@@ -1,3 +1,7 @@
 schema_version: 0.1.0
 description: Optional competition templates, writing patterns, and verified citation cards.
-cards: []
+cards:
+  - id: writing-cumcm-2024-2025
+    path: cumcm-2024-2025-writing-cards.md
+    load_when: Drafting a CUMCM-style paper, calibrating claim scope, or selecting an official-template delivery route.
+    source_status: Local structural abstraction; case papers are not verified citation sources.

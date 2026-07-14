@@ -1,4 +1,16 @@
 schema_version: 0.1.0
-case_cards: []
-method_cards: []
-validation_cards: []
+case_cards:
+  - id: case-cumcm-2024-2025-structures
+    path: cumcm-2024-2025-method-cards.md
+    load_when: The active task has a comparable multi-stage, physics-inversion, state-network, or continuous-geometry structure.
+    source_status: User-provided local corpus; case-paper award, authorship, and license are unverified.
+method_cards:
+  - id: methods-cumcm-2024-2025
+    path: cumcm-2024-2025-method-cards.md
+    load_when: Candidate generation needs structural alternatives, upgrade criteria, or rejection conditions.
+    source_status: Local structural abstraction only; do not import case values or prose.
+validation_cards:
+  - id: validation-cumcm-2024-2025
+    path: cumcm-2024-2025-method-cards.md
+    load_when: A main route needs a deciding test or a complexity/feasibility fallback.
+    source_status: Local structural abstraction only.

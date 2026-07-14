@@ -1,0 +1,27 @@
+schema_version: 0.1.0
+# decision_type: scope | assumption | objective-tradeoff | data-policy | method-commitment | claim-scope
+entries:
+  - id: hdec-001
+    phase: problem-analysis
+    decision_type: assumption
+    risk_level: high
+    status: awaiting-human
+    question: Describe the high-impact choice that needs human judgment.
+    options:
+      - id: opt-a
+        summary: Describe one coherent option.
+        evidence_refs: []
+        benefits: []
+        risks: []
+        verification_conditions: []
+        fallback_if_rejected: null
+    agent_recommendation:
+      option_id: opt-a
+      rationale: Explain the recommendation and remaining uncertainty.
+    human_selection:
+      option_id: null
+      rationale: null
+      selected_by: null
+      selected_at: null
+    downstream_conditions: []
+    feedback_trigger: Describe what evidence would reopen this choice.

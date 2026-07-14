@@ -18,6 +18,7 @@ analysis_sequence:
   - static/analysis-methods/dependency-analysis.md
   - static/analysis-methods/ambiguity-assumption-analysis.md
   - static/analysis-methods/adversarial-review.md
+  - static/analysis-methods/judgment-prompts.md
 
 axes:
   competition:
@@ -55,6 +56,8 @@ references:
     - after: requirement-decomposition
       when_any_task_tags: [prediction, classification, evaluation, uncertainty-analysis]
       load: static/fragments/task-structure/evidence-criterion.md
+
+knowledge_index: references/index.yaml
 
 outputs:
   directory: analysis
